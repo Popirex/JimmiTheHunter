@@ -1,5 +1,5 @@
 #include "map.h"
-#include "player.h"
+#include "projectile.h"
 #include <raylib.h>
 
 #define WIDTH 1200
@@ -13,13 +13,13 @@ const char* dirtPath = "rsc/textures/dirt.png";
 
 
 
-
 int main(){
 
 
     // variabili 
     int y, x;
     int* bitMap = NULL;
+    Projectile* projectiles = NULL;
     Texture2D grass, dirt;
     Player player;
 
@@ -33,6 +33,9 @@ int main(){
     // carico la bitMap dal file
 
     bitMapExtraction( &y, &x, &bitMap, mapPath);
+
+    // alloco la memoria per i proiettili
+    allocateProjectiles(&projectiles);
 
 
 
@@ -69,5 +72,6 @@ int main(){
     }
 
     //printMapData(bitMap, y, x);
+    printProjectiles(projectiles);
     return EXIT_SUCCESS;
 }

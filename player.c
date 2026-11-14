@@ -115,13 +115,6 @@ void movePlayer(Player* p){
         gravity = 1;
     }
 
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        p->shooting = true;
-    }
-    else{
-        p->shooting = false;
-    }
-
 }
 
 void drawPlayer(Player* p){

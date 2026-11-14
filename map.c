@@ -2,6 +2,7 @@
 #include <raylib.h>
 
 
+
 //              ||||||||    APERTURA FILE E ESTRAZIONE BITMAP   ||||||||
 
 
@@ -28,7 +29,7 @@ void bitMapExtraction(int* y, int* x, int** bitMap, const char* mapPath){
 
     // exit se è riscontrato un errore nell'allocazione
     if(*bitMap == NULL){
-        printf("ERRORE: malloc per la bitMap Fallita");
+        printf("ERRORE: malloc per la bitMap Fallita\n");
         fclose(mapFile);
         exit(2);
     }
