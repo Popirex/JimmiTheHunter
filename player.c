@@ -4,6 +4,7 @@
 #include <stdio.h>
 #define x_friction 0.7
 #define y_friction 0.9
+#define TILESIZE 40
 
 // idle paths
 const char* idleL = "rsc/playerArt/idle/player_idle_left.png";
@@ -63,7 +64,7 @@ void loadSkins(Player* p){
 
 }
 
-void initializePlayer(Player* p, float WIDTH, float HEIGHT, float TILESIZE){
+void initializePlayer(Player* p, float WIDTH, float HEIGHT){
     p->pos = (Vector2){ WIDTH/2  , HEIGHT - (5*TILESIZE)  };
 
     p->vel = Vector2Zero();
@@ -73,6 +74,8 @@ void initializePlayer(Player* p, float WIDTH, float HEIGHT, float TILESIZE){
     p->orientation = 0;
 
     p->step = 0;
+
+    p->hitBox = (Rectangle){p->pos.x, p->pos.y, TILESIZE, TILESIZE };
 
     p->shooting = false;
 }
@@ -90,6 +93,8 @@ void updatePlayer(Player* p){
         p->vel.y = 0;
         gravity = 0;
     }
+
+    p->hitBox = (Rectangle){p->pos.x, p->pos.y, TILESIZE, TILESIZE };
 
     if(p->vel.x ==  0 ) p->step = 0;
 
@@ -147,4 +152,8 @@ void drawPlayer(Player* p){
 
 void printPlayerInfo(Player* p){
     printf("pos: {%f, %f}   -   vel: {%f, %f}   -   acc: {%f, %f}\n", p->pos.x, p->pos.y, p->vel.x, p->vel.y, p->acc.x, p->acc.y);
+}
+
+void drawPlayerHitBox(Player* p){
+    DrawRectangleLinesEx(p->hitBox, 1, RED);
 }

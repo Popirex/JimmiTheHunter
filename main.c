@@ -23,7 +23,7 @@ int main(){
     Texture2D grass, dirt;
     Player player;
 
-    initializePlayer(&player, WIDTH, HEIGHT, TILESIZE);
+    initializePlayer(&player, WIDTH, HEIGHT);
 
 
 
@@ -61,6 +61,7 @@ int main(){
             ClearBackground(SKYBLUE);
             drawMap(bitMap, y, x, grass, dirt, TILESIZE);
             drawPlayer(&player);
+            drawPlayerHitBox(&player);
             //printPlayerInfo(&player);
 
             
