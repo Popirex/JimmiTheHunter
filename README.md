@@ -31,13 +31,13 @@ make
 
 Run the game **from the project's root folder**, since the resource paths (`rsc/...`) are relative.
 
-## 🚀 Roadmap
+## Roadmap
 
 - Collisions with map blocks
 - Projectiles and hunting mechanics
 - Enemies and prey
 - More levels and tile types
 
-## 👤 Author
+## Author
 
 Developed by **Popirex**.
