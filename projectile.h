@@ -7,7 +7,9 @@ typedef struct{
     Vector2 endPoint;
     Vector2 vel;
     bool state;
-    int width, height;
+    float radius;
+    bool hitBoxActivate;
+    Rectangle hitBox;
 }Projectile;
 
 void allocateProjectiles(Projectile** prs);
@@ -18,6 +20,12 @@ void printProjectiles(Projectile* prs);
 
 void moveProjectile(Projectile** prs);
 
-void checkProjectileLife(Projectile** prs);
+bool projectileIsIn(Projectile* prs);
 
-void PlayerShooting(Player* p, Projectile** pr);
+void playerShooting(Player* p, Projectile** pr);
+
+void drawProjectiles(Projectile** pr);
+
+bool checkPossibleShot(Player* p, Vector2 mousePos);
+
+void updateHitBox(Projectile* pr);

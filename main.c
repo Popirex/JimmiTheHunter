@@ -57,14 +57,22 @@ int main(){
     while (!WindowShouldClose())
     {
 
+        // move & update player position
         movePlayer(&player);
+        playerShooting(&player, &projectiles);
         updatePlayer(&player);
+
+        //
+
+        // move & update projectiles position;
+        moveProjectile(&projectiles);
 
         BeginDrawing();
             ClearBackground(SKYBLUE);
             drawMap(bitMap, y, x, grass, dirt, TILESIZE);
             drawPlayer(&player);
             drawPlayerHitBox(&player);
+            drawProjectiles(&projectiles);
             //printPlayerInfo(&player);
 
             
@@ -72,6 +80,6 @@ int main(){
     }
 
     //printMapData(bitMap, y, x);
-    printProjectiles(projectiles);
+    //printProjectiles(projectiles);
     return EXIT_SUCCESS;
 }

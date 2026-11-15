@@ -3,9 +3,8 @@
 #include <raymath.h>
 
 #define MAX_PROJECTILE_COUNT 500
-#define pr_width 8
-#define pr_height 3
-#define PROJECTILE_SPEED 100
+#define pr_radius 3
+#define PROJECTILE_SPEED 10
 
 
 void allocateProjectiles(Projectile** prs){
@@ -19,15 +18,21 @@ void allocateProjectiles(Projectile** prs){
         exit(4);
     }
     // inizializzo lo stato di tutti i proiettili
+    Projectile* p;
     for(int i = 0; i < MAX_PROJECTILE_COUNT; i++){
-        (*prs)[i].state = false;
+        p = &(*prs)[i];
+        p->state = false;
+        p->radius = pr_radius;
+        p->hitBoxActivate = false;
+        updateHitBox(p);
+
     }
 }
 
 void createProjectile(Player *p, Projectile** prs, Vector2 mousePos){
-
     int x_off = 0;
     int y_off = 20;
+
 
     if(p->orientation == 0){
         x_off = 40;
@@ -61,38 +66,65 @@ void createProjectile(Player *p, Projectile** prs, Vector2 mousePos){
 void printProjectiles(Projectile* prs){
 
     for(int i = 0; i < MAX_PROJECTILE_COUNT; i++){
-        printf("pos: {%f, %f    }     -   vel: {%f, %f}     -   state: { %s }\n", prs[i].pos.x, prs[i].pos.y, prs[i].vel.x, prs[i].vel.y, prs[i].state?"true":"false");
+        printf("pos: {%f, %f    }     -   vel: {%f, %f}     -   state: { %d }\n", prs[i].pos.x, prs[i].pos.y, prs[i].vel.x, prs[i].vel.y, prs[i].state);
     }
 
 }
 
 void moveProjectile(Projectile** prs){
-    float dt = GetFrameTime();
+    Projectile* pr;
     for(int i = 0; i < MAX_PROJECTILE_COUNT; i++){
-        Projectile* pr = &(*prs)[i];
+        pr = &(*prs)[i];
         // salto i proiettili non attivi
         if(!pr->state) continue;
-        pr->pos = Vector2Add(pr->pos, Vector2Scale(pr->vel, dt));
+        pr->pos = Vector2Add(pr->pos, pr->vel);
+        updateHitBox(pr);
+        pr->state = projectileIsIn(pr);
     }
 }
 
-void checkProjectileLife(Projectile** prs){
-    for(int i = 0; i < MAX_PROJECTILE_COUNT; i++){
-        Projectile* pr = &(*prs)[i];
-
-        if(!pr->state) continue;
-
-        if((pr->pos.x > 1280 || pr->pos.x < 0) || (pr->pos.y < 0 || pr->pos.y > 600 )) pr->state = false;
-
-    }
+bool projectileIsIn(Projectile* pr){
+    // if in the map the states becomes true and the projectile is still used 
+    if(pr->pos.x < 1280 && pr->pos.x > 0 && pr->pos.y > 0 && pr->pos.y <= 620 ) return true;
+    return false;
 }
 
-void PlayerShooting(Player* p, Projectile** pr){
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+void playerShooting(Player* p, Projectile** pr){
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && checkPossibleShot(p, GetMousePosition())) {
         p->shooting = true;
         createProjectile(p, pr, GetMousePosition());
     }
     else{
         p->shooting = false;
     }
+}
+
+void drawProjectiles(Projectile** pr){
+    Projectile* p;
+    for(int i = 0; i < MAX_PROJECTILE_COUNT; i++){
+        p = &(*pr)[i];
+        if(!p->state) continue;
+        DrawCircleV(p->pos, p->radius, GRAY);
+        if(p->hitBoxActivate) DrawRectangleLinesEx(p->hitBox, 1, RED);
+        //printf("pos: {%f, %f    }     -   vel: {%f, %f}     -   state: { %d } - hitBox{ %d }\n", p->pos.x, p->pos.y, p->vel.x, p->vel.y, p->state, p->hitBoxActivate);
+    }
+}
+
+bool checkPossibleShot(Player* p, Vector2 mousePos){
+    int x_off = 20;
+    // verifico subito se il mouse è davanti al gicatore ( non può sparare dalla schiena)
+    if((p->orientation == 0) && (mousePos.x > p->pos.x + x_off) ) return true;
+    else if((p->orientation == 1) && (mousePos.x < p->pos.x + x_off) ) return true;
+    else{
+        return false;
+    }
+}
+
+void updateHitBox(Projectile* pr){
+    pr->hitBox = (Rectangle){
+        pr->pos.x - pr->radius,
+        pr->pos.y - pr->radius,
+        pr->radius * 2,
+        pr->radius * 2
+    };
 }
