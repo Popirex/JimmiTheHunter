@@ -111,10 +111,10 @@ void drawProjectiles(Projectile** pr){
 }
 
 bool checkPossibleShot(Player* p, Vector2 mousePos){
-    int x_off = 20;
+    int x_off = 40;
     // verifico subito se il mouse è davanti al gicatore ( non può sparare dalla schiena)
     if((p->orientation == 0) && (mousePos.x > p->pos.x + x_off) ) return true;
-    else if((p->orientation == 1) && (mousePos.x < p->pos.x + x_off) ) return true;
+    else if((p->orientation == 1) && (mousePos.x < p->pos.x) ) return true;
     else{
         return false;
     }
