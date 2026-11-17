@@ -5,6 +5,7 @@
 #define MAX_PROJECTILE_COUNT 500
 #define pr_radius 3
 #define PROJECTILE_SPEED 10
+const bool hitBoxActivate = false;
 
 
 void allocateProjectiles(Projectile** prs){
@@ -23,13 +24,13 @@ void allocateProjectiles(Projectile** prs){
         p = &(*prs)[i];
         p->state = false;
         p->radius = pr_radius;
-        p->hitBoxActivate = false;
+        p->hitBoxActivate = hitBoxActivate;
         updateHitBox(p);
 
     }
 }
 
-void createProjectile(Player *p, Projectile** prs, Vector2 mousePos){
+bool createProjectile(Player *p, Projectile** prs, Vector2 mousePos){
     int x_off = 0;
     int y_off = 20;
 
@@ -41,25 +42,26 @@ void createProjectile(Player *p, Projectile** prs, Vector2 mousePos){
     Vector2 start = (Vector2){p->pos.x + x_off, p->pos.y + y_off};
     Vector2 dir = Vector2Subtract(mousePos, start);
 
-    if(Vector2Length(dir) < 0.001f) return;
+    if(Vector2Length(dir) < 0.001f) return false;
 
     dir = Vector2Normalize(dir);
 
 
-
+    Projectile* pr;
     for(int i = 0; i < MAX_PROJECTILE_COUNT; i++){
-        Projectile* pr = &(*prs)[i];
+        pr = &(*prs)[i];
 
         if(!pr->state){
             pr->pos = start;
             pr->endPoint = mousePos;
             pr->vel = Vector2Scale(dir, PROJECTILE_SPEED);
             pr->state = true;
-            break;
+            return true;
         }
 
         
     }
+    return false;
 
 }
 
@@ -71,16 +73,27 @@ void printProjectiles(Projectile* prs){
 
 }
 
-void moveProjectile(Projectile** prs){
+void moveProjectile(Projectile** prs, int* aPr){
     Projectile* pr;
-    for(int i = 0; i < MAX_PROJECTILE_COUNT; i++){
-        pr = &(*prs)[i];
+    int checked = 0;
+    int skipped = 0;
+    int deleted = 0;
+    
+    while(checked < (*aPr)){
+        pr = &(*prs)[checked + skipped];
         // salto i proiettili non attivi
-        if(!pr->state) continue;
+        if(!pr->state){
+            skipped++;
+            continue;
+        }
         pr->pos = Vector2Add(pr->pos, pr->vel);
         updateHitBox(pr);
         pr->state = projectileIsIn(pr);
+        if(!pr->state) deleted++;
+        checked++;
     }
+    (*aPr) -= deleted;
+
 }
 
 bool projectileIsIn(Projectile* pr){
@@ -89,24 +102,30 @@ bool projectileIsIn(Projectile* pr){
     return false;
 }
 
-void playerShooting(Player* p, Projectile** pr){
+void playerShooting(Player* p, Projectile** pr, int* aPr){
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && checkPossibleShot(p, GetMousePosition())) {
         p->shooting = true;
-        createProjectile(p, pr, GetMousePosition());
+        if(createProjectile(p, pr, GetMousePosition())) (*aPr)++;
     }
     else{
         p->shooting = false;
     }
 }
 
-void drawProjectiles(Projectile** pr){
+void drawProjectiles(Projectile** pr, int aPr){
     Projectile* p;
-    for(int i = 0; i < MAX_PROJECTILE_COUNT; i++){
-        p = &(*pr)[i];
-        if(!p->state) continue;
+    int checked = 0;
+    int skipped = 0;
+
+    while( checked < aPr){
+        p = &(*pr)[checked + skipped];
+        if(!p->state){
+            skipped++;
+            continue;
+        }
         DrawCircleV(p->pos, p->radius, GRAY);
-        if(p->hitBoxActivate) DrawRectangleLinesEx(p->hitBox, 1, RED);
-        //printf("pos: {%f, %f    }     -   vel: {%f, %f}     -   state: { %d } - hitBox{ %d }\n", p->pos.x, p->pos.y, p->vel.x, p->vel.y, p->state, p->hitBoxActivate);
+        if(p->hitBoxActivate) DrawRectangleLinesEx(p->hitBox, 1, RED);  
+        checked++;
     }
 }
 

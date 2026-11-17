@@ -19,6 +19,7 @@ int main(){
     // variabili 
     int y, x;
     int* bitMap = NULL;
+    int activeProjectiles = 0;
     Projectile* projectiles = NULL;
     Texture2D grass, dirt;
     Player player;
@@ -59,21 +60,20 @@ int main(){
 
         // move & update player position
         movePlayer(&player);
-        playerShooting(&player, &projectiles);
+        playerShooting(&player, &projectiles, &activeProjectiles);
         updatePlayer(&player);
 
         //
 
         // move & update projectiles position;
-        moveProjectile(&projectiles);
+        moveProjectile(&projectiles, &activeProjectiles);
 
         BeginDrawing();
             ClearBackground(SKYBLUE);
             drawMap(bitMap, y, x, grass, dirt, TILESIZE);
             drawPlayer(&player);
-            drawPlayerHitBox(&player);
-            drawProjectiles(&projectiles);
-            //printPlayerInfo(&player);
+            //drawPlayerHitBox(&player);
+            drawProjectiles(&projectiles, activeProjectiles);
 
             
         EndDrawing();

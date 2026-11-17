@@ -14,17 +14,17 @@ typedef struct{
 
 void allocateProjectiles(Projectile** prs);
 
-void createProjectile(Player* p, Projectile** prs, Vector2 mousePos);
+bool createProjectile(Player* p, Projectile** prs, Vector2 mousePos);
 
 void printProjectiles(Projectile* prs);
 
-void moveProjectile(Projectile** prs);
+void moveProjectile(Projectile** prs, int* aPr);
 
 bool projectileIsIn(Projectile* prs);
 
-void playerShooting(Player* p, Projectile** pr);
+void playerShooting(Player* p, Projectile** pr, int* aPr);
 
-void drawProjectiles(Projectile** pr);
+void drawProjectiles(Projectile** pr, int aPr);
 
 bool checkPossibleShot(Player* p, Vector2 mousePos);
 
